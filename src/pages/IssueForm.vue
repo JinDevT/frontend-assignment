@@ -31,10 +31,14 @@
             v-model="form.status"
             :disabled="isEdit && isStatusFinal"
           >
-            <option value="PENDING">대기</option>
-            <option value="IN_PROGRESS" :disabled="form.userId === null">진행중</option>
-            <option value="COMPLETED" :disabled="form.userId === null">완료</option>
-            <option value="CANCELLED" :disabled="form.userId === null">취소</option>
+            <option
+              v-for="option in statusOptions"
+              :key="option.value"
+              :value="option.value"
+              :disabled="option.needsAssignee && form.userId === null"
+            >
+              {{ option.label }}
+            </option>
           </select>
         </div>
       </div>
@@ -53,6 +57,12 @@ const router = useRouter()
 
 const isEdit = !!route.params.id
 const userList = users
+const statusOptions = [
+  { value: 'PENDING', label: '대기', needsAssignee: false },
+  { value: 'IN_PROGRESS', label: '진행중', needsAssignee: true },
+  { value: 'COMPLETED', label: '완료', needsAssignee: true },
+  { value: 'CANCELLED', label: '취소', needsAssignee: true },
+]
 
 const existing = isEdit ? issues.find((issue) => issue.id === Number(route.params.id)) : null
 
