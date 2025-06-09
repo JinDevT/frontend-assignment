@@ -49,6 +49,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import dayjs from 'dayjs'
 import { issues } from '@/data/mockData'
 
 const router = useRouter()
@@ -67,24 +68,14 @@ const filteredIssues = computed(() => {
   return issues.filter((issue) => issue.status === selectedStatus.value)
 })
 
+const formatDate = (dateString) => dayjs(dateString).format('YYYY.MM.DD HH:mm')
+
 const redirectToDetailIssue = (id) => {
   router.push(`/issues/${id}`)
 }
 
 const redirectCreateIssue = () => {
   router.push('/issues/new')
-}
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  })
 }
 </script>
 
