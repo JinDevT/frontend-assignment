@@ -78,39 +78,41 @@ const isStatusFinal = computed(() => {
 
 const handleSubmit = () => {
   const selectedUser = users.find((user) => user.id === form.value.userId) || null
+  const now = new Date().toISOString()
 
   if (isEdit) {
-    const index = issues.findIndex((issue) => issue.id === Number(route.params.id))
+    const issueId = Number(route.params.id)
+    const index = issues.findIndex((issue) => issue.id === issueId)
     const prevIssue = issues[index]
-    const hadNoAssignee = !prevIssue.user
-    const hasAssigneeNow = !!selectedUser
-    const updatedStatus =
-      hadNoAssignee && hasAssigneeNow && form.value.status === 'PENDING'
-        ? 'IN_PROGRESS'
-        : form.value.status
 
-    issues[index] = {
-      ...issues[index],
+    const shouldUpdateStatus =
+      !prevIssue.user && selectedUser && form.value.status === 'PENDING'
+
+    const updatedIssue = {
+      ...prevIssue,
       ...form.value,
-      status: updatedStatus,
+      status: shouldUpdateStatus ? 'IN_PROGRESS' : form.value.status,
       user: selectedUser,
-      updatedAt: new Date().toISOString(),
+      updatedAt: now,
     }
+
+    issues[index] = updatedIssue
   } else {
-    const nextId = issues.length + 1
     const newIssue = {
-      id: nextId,
+      id: issues.length + 1,
       ...form.value,
       user: selectedUser,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: form.value.userId ? form.value.status : 'PENDING',
+      createdAt: now,
+      updatedAt: now,
+      status: selectedUser ? form.value.status : 'PENDING',
     }
+
     issues.push(newIssue)
   }
 
   router.push('/issues')
 }
+
 </script>
 
 <style lang="scss" scoped>
