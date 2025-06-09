@@ -77,15 +77,15 @@ VITE_MODE=DEV     # 개발 모드 (Mock 데이터 사용)
 ```javascript
 // 미리 정의된 사용자 목록
 export const users = [
-  { id: 1, name: '김개발' },
-  { id: 2, name: '이디자인' },
-  { id: 3, name: '박기획' },
-]
+  { id: 1, name: "김개발" },
+  { id: 2, name: "이디자인" },
+  { id: 3, name: "박기획" },
+];
 
 // 샘플 이슈 데이터 (4개의 서로 다른 상태)
 export const issues = [
   // ... 이슈 목록
-]
+];
 ```
 
 **개발 시 Mock 데이터를 적극 활용하여 빠른 개발을 진행하시기 바랍니다.**
@@ -127,20 +127,20 @@ export const issues = [
 
 #### 필수 기능
 
-- [ ] 이슈 목록 표시 (제목, 상태, 담당자, 생성일)
-- [ ] 상태별 필터링 (전체, PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
-- [ ] 새 이슈 생성 버튼
-- [ ] 각 이슈 클릭 시 상세 페이지로 이동
+- [v] 이슈 목록 표시 (제목, 상태, 담당자, 생성일)
+- [v] 상태별 필터링 (전체, PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
+- [v] 새 이슈 생성 버튼
+- [v] 각 이슈 클릭 시 상세 페이지로 이동
 
 ### 2. 이슈 생성/상세/수정 페이지 (필수)
 
 #### 필수 기능
 
-- [ ] 이슈 정보 표시 및 편집 (제목, 설명, 상태)
-- [ ] 담당자 지정 기능 (드롭다운: 김개발, 이디자인, 박기획 중 선택)
-- [ ] 상태 변경 기능 (PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
-- [ ] 저장 기능
-- [ ] 목록으로 돌아가기
+- [v] 이슈 정보 표시 및 편집 (제목, 설명, 상태)
+- [v] 담당자 지정 기능 (드롭다운: 김개발, 이디자인, 박기획 중 선택)
+- [v] 상태 변경 기능 (PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
+- [v] 저장 기능
+- [v] 목록으로 돌아가기
 
 ## API 연동
 
