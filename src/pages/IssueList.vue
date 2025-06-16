@@ -50,10 +50,12 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
-import { issues } from '@/data/mockData'
+import { useIssueStore } from '@/store/useIssueStore'
 
 const router = useRouter()
 const selectedStatus = ref('ALL')
+
+const issueStore = useIssueStore()
 
 const statusOptions = [
   { value: 'ALL', label: '전체' },
@@ -63,10 +65,7 @@ const statusOptions = [
   { value: 'CANCELLED', label: '취소' },
 ]
 
-const filteredIssues = computed(() => {
-  if (selectedStatus.value === 'ALL') return issues
-  return issues.filter((issue) => issue.status === selectedStatus.value)
-})
+const filteredIssues = computed(() => issueStore.filteredIssues(selectedStatus.value))
 
 const formatDate = (dateString) => dayjs(dateString).format('YYYY.MM.DD HH:mm')
 
