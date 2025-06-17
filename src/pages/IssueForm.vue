@@ -42,7 +42,9 @@
           </select>
         </div>
       </div>
-      <button class="issue-form__button" type="submit">저장</button>
+      <button class="issue-form__button" type="submit">
+        {{ isEdit ? '수정' : '생성' }}
+      </button>
     </form>
   </div>
 </template>
@@ -50,10 +52,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { issues, users } from '@/data/mockData'
+import { users } from '@/data/mockData'
+import { useIssueStore } from '@/store/useIssueStore'
 
 const route = useRoute()
 const router = useRouter()
+
+const issueStore = useIssueStore()
+const issues = issueStore.issues
 
 const isEdit = !!route.params.id
 const userList = users
@@ -64,21 +70,29 @@ const statusOptions = [
   { value: 'CANCELLED', label: '취소', needsAssignee: true },
 ]
 
-const existing = isEdit ? issues.find((issue) => issue.id === Number(route.params.id)) : null
+const targetIssue = isEdit
+  ? issues.find((issue) => issue.id === Number(route.params.id))
+  : null
 
-const initialFormData = existing
-  ? {
-      title: existing.title,
-      description: existing.description,
-      status: existing.status,
-      userId: existing.user?.id ?? null,
-    }
-  : {
+const getInitialFormData = (issue) => {
+  if (!issue) {
+    return {
       title: '',
       description: '',
       status: 'PENDING',
       userId: null,
     }
+  }
+
+  return {
+    title: issue.title,
+    description: issue.description,
+    status: issue.status,
+    userId: issue.user?.id ?? null,
+  }
+}
+
+const initialFormData = getInitialFormData(targetIssue)
 
 const form = ref({ ...initialFormData })
 
@@ -86,40 +100,43 @@ const isStatusFinal = computed(() => {
   return ['COMPLETED', 'CANCELLED'].includes(form.value.status)
 })
 
-const handleSubmit = () => {
-  const selectedUser = users.find((user) => user.id === form.value.userId) || null
-  const now = new Date().toISOString()
-
-  if (isEdit) {
-    const issueId = Number(route.params.id)
-    const index = issues.findIndex((issue) => issue.id === issueId)
-    const prevIssue = issues[index]
-
-    const shouldUpdateStatus =
-      !prevIssue.user && selectedUser && form.value.status === 'PENDING'
-
-    const updatedIssue = {
-      ...prevIssue,
-      ...form.value,
-      status: shouldUpdateStatus ? 'IN_PROGRESS' : form.value.status,
-      user: selectedUser,
-      updatedAt: now,
-    }
-
-    issues[index] = updatedIssue
-  } else {
-    const newIssue = {
-      id: issues.length + 1,
-      ...form.value,
-      user: selectedUser,
-      createdAt: now,
-      updatedAt: now,
-      status: selectedUser ? form.value.status : 'PENDING',
-    }
-
-    issues.push(newIssue)
+const createIssue = (selectedUser, now) => {
+  const newIssue = {
+    id: issues.length + 1,
+    ...form.value,
+    user: selectedUser,
+    createdAt: now,
+    updatedAt: now,
+    status: selectedUser ? form.value.status : 'PENDING',
   }
 
+  issues.push(newIssue)
+}
+
+const updateIssue = (selectedUser, now) => {
+  const issueId = Number(route.params.id)
+  const index = issues.findIndex(issue => issue.id === issueId)
+  const prevIssue = issues[index]
+
+  const shouldUpdateStatus =
+    !prevIssue.user && selectedUser && form.value.status === 'PENDING'
+
+  const updatedIssue = {
+    ...prevIssue,
+    ...form.value,
+    status: shouldUpdateStatus ? 'IN_PROGRESS' : form.value.status,
+    user: selectedUser,
+    updatedAt: now,
+  }
+
+  issues[index] = updatedIssue
+}
+
+const handleSubmit = () => {
+  const selectedUser = users.find(user => user.id === form.value.userId) || null
+  const now = new Date().toISOString()
+
+  isEdit ? updateIssue(selectedUser, now) : createIssue(selectedUser, now)
   router.push('/issues')
 }
 

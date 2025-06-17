@@ -7,8 +7,10 @@ export const useIssueStore = defineStore("issue", {
   }),
   getters: {
     filteredIssues: (state) => (status) => {
-      if (status === "ALL") return state.issues;
-      return state.issues.filter((issue) => issue.status === status);
+      const issues = state.issues;
+
+      if (status === "ALL") return issues;
+      return issues.filter((issue) => issue.status === status);
     },
   },
 });
